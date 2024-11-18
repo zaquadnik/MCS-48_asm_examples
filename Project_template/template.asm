@@ -1,11 +1,11 @@
 
-org 0
+.org 0
 	jmp Start
 	
-org 3
+.org 3
 	jmp ExtInt
 	
-org 7
+.org 7
 	jmp TmrInt
 	
 Start:
