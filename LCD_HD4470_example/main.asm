@@ -269,9 +269,9 @@ LCDfirstline:
 	
 ;===============================
 LCDchar:
+	mov A,R2
 	sel RB1
 	anl P1,#0E0h
-	mov A,R2
 	anl A,#0F0h
 	swap A
 	mov R1,A
