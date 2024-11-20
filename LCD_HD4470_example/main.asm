@@ -13,17 +13,26 @@
 	
 .org 7
 	jmp TmrInt
+
+;----------------------------------	
+; RO Data Section
+;----------------------------------		
+.org 15
+Text: .db 0x38,0x30,0x34,0x38
 	
+.org 32	
 Start:
 	call LCDinit
-	mov R2,#038h
+	mov R0,#Text
+Display:
+	mov A,R0
+	movp A,@A
+	mov R2,A
 	call LCDchar
-	mov R2,#030h
-	call LCDchar
-	mov R2,#034h
-	call LCDchar
-	mov R2,#038h
-	call LCDchar	
+	inc R0
+	mov A,R0
+	xrl A,#Text + 4
+	jnz Display
 	
 MainLoop:
 	nop
@@ -36,7 +45,7 @@ ExtInt:
 TmrInt:
 	nop
 	retr
-
+	
 ;----------------------------------	
 ; LCD HD44780 control
 ; Pin map:
@@ -260,6 +269,7 @@ LCDfirstline:
 	
 ;===============================
 LCDchar:
+	sel RB1
 	anl P1,#0E0h
 	mov A,R2
 	anl A,#0F0h
@@ -281,6 +291,7 @@ LCDchar:
 	anl P1,#0EFh ; Clear E
 	mov A,#02h
 	call Wait
+	sel RB0
 	ret
 ;==============================
 
@@ -293,29 +304,3 @@ Wait:
   	djnz R1,InLoop	;2 cycles
   	ret
 ;==============================
-
-	
-;----------------------------------	
-; Arithmetic multiply procedure	
-;----------------------------------	
-; Arguments in R0 and R1	
-Mul:
-	clr C
-	mov A,R1
-	mov R3,A	
-	mov A,R0
-	mov R2,A 
-	; R0:R1 copied to R2:R3
-	mov R4,#01h
-MulLoop:
-	anl A,R4
-	jz NoAdd
-	clr A
-	addc A,R2
-	mov R1,A
-NoAdd:
-	xch A,R4
-	rl A 
-	xch A,R4
-	
-	ret
