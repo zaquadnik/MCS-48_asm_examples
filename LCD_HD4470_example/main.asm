@@ -4,23 +4,27 @@
 ; Machine cycle is 1.5 us
 ;--------------------------------
 
-
-.org 0
+.org 00h
 	jmp Start
 	
-.org 3
+.org 03h
 	jmp ExtInt
 	
-.org 7
+.org 07h
 	jmp TmrInt
 
 ;----------------------------------	
 ; RO Data Section
 ;----------------------------------		
-.org 15
+
+.org 0Fh
 Text: .db 0x38,0x30,0x34,0x38
+
+;----------------------------------	
+; Code Section
+;----------------------------------		
 	
-.org 32	
+.org 20h	
 Start:
 	call LCDinit
 	mov R0,#Text
@@ -269,8 +273,9 @@ LCDfirstline:
 	
 ;===============================
 LCDchar:
-	mov A,R2
-	sel RB1
+	mov A,R2 ; Copy input data to accumulator
+	sel RB1  ; Select second register bank
+	mov R2,A ; Copy data to R2 in second register bank
 	anl P1,#0E0h
 	anl A,#0F0h
 	swap A
